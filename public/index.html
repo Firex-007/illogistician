@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Illogistician — Decentralized Cold-Chain Cargo Tamper Monitoring & Custody Attribution Dashboard">
+  <title>Illogistician — Cold Chain Monitor</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- ── Header ──────────────────────────────────────── -->
+  <header id="app-header">
+    <div class="header-left">
+      <div class="logo-mark">
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+          <rect x="2" y="6" width="28" height="20" rx="3" stroke="url(#grad)" stroke-width="2" fill="none"/>
+          <path d="M2 12h28M10 12v14M22 12v14" stroke="url(#grad)" stroke-width="1.5" opacity="0.6"/>
+          <circle cx="16" cy="19" r="3" fill="url(#grad)" opacity="0.8"/>
+          <path d="M14 2l2 4 2-4" stroke="#22d3ee" stroke-width="1.5" stroke-linecap="round"/>
+          <defs><linearGradient id="grad" x1="0" y1="0" x2="32" y2="32"><stop stop-color="#22d3ee"/><stop offset="1" stop-color="#8b5cf6"/></linearGradient></defs>
+        </svg>
+      </div>
+      <div>
+        <h1>Illogistician</h1>
+        <p class="subtitle">Cold-Chain Tamper Monitor & Custody Attribution</p>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="connection-badge" id="connection-status">
+        <span class="pulse-dot"></span>
+        <span>Connecting...</span>
+      </div>
+      <div class="device-badge" id="device-badge">cargo-esp32-001</div>
+    </div>
+  </header>
+
+  <!-- ── Main Grid ───────────────────────────────────── -->
+  <main id="dashboard">
+    <!-- Row 1: Status Cards -->
+    <section class="card-row">
+      <div class="glass-card status-card" id="card-tamper">
+        <div class="card-icon">🛡️</div>
+        <div class="card-body">
+          <span class="card-label">Tamper Status</span>
+          <span class="card-value" id="tamper-status">—</span>
+        </div>
+        <div class="status-glow" id="tamper-glow"></div>
+      </div>
+
+      <div class="glass-card status-card">
+        <div class="card-icon">📦</div>
+        <div class="card-body">
+          <span class="card-label">Total Packets</span>
+          <span class="card-value mono" id="total-packets">0</span>
+        </div>
+      </div>
+
+      <div class="glass-card status-card">
+        <div class="card-icon">🔗</div>
+        <div class="card-body">
+          <span class="card-label">Chain Integrity</span>
+          <span class="card-value" id="chain-integrity">—</span>
+        </div>
+      </div>
+
+      <div class="glass-card status-card">
+        <div class="card-icon">📡</div>
+        <div class="card-body">
+          <span class="card-label">IPFS Anchored</span>
+          <span class="card-value mono" id="ipfs-count">0</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Row 2: Gauges -->
+    <section class="card-row gauges-row">
+      <div class="glass-card gauge-card">
+        <h3>Temperature</h3>
+        <div class="gauge-container">
+          <svg class="gauge-svg" viewBox="0 0 200 120">
+            <path d="M20 100 A80 80 0 0 1 180 100" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="12" stroke-linecap="round"/>
+            <path id="temp-arc" d="M20 100 A80 80 0 0 1 180 100" fill="none" stroke="url(#tempGrad)" stroke-width="12" stroke-linecap="round" stroke-dasharray="251.2" stroke-dashoffset="251.2"/>
+            <defs>
+              <linearGradient id="tempGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#22d3ee"/>
+                <stop offset="50%" stop-color="#10b981"/>
+                <stop offset="100%" stop-color="#ef4444"/>
+              </linearGradient>
+            </defs>
+          </svg>
+          <div class="gauge-value">
+            <span class="gauge-number" id="temp-value">—</span>
+            <span class="gauge-unit">°C</span>
+          </div>
+        </div>
+        <div class="gauge-meta">
+          <span>Min: <b id="temp-min">—</b></span>
+          <span>Avg: <b id="temp-avg">—</b></span>
+          <span>Max: <b id="temp-max">—</b></span>
+        </div>
+      </div>
+
+      <div class="glass-card gauge-card">
+        <h3>Accelerometer</h3>
+        <div class="gauge-container">
+          <svg class="gauge-svg" viewBox="0 0 200 120">
+            <path d="M20 100 A80 80 0 0 1 180 100" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="12" stroke-linecap="round"/>
+            <path id="accel-arc" d="M20 100 A80 80 0 0 1 180 100" fill="none" stroke="url(#accelGrad)" stroke-width="12" stroke-linecap="round" stroke-dasharray="251.2" stroke-dashoffset="251.2"/>
+            <defs>
+              <linearGradient id="accelGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#10b981"/>
+                <stop offset="70%" stop-color="#f59e0b"/>
+                <stop offset="100%" stop-color="#ef4444"/>
+              </linearGradient>
+            </defs>
+          </svg>
+          <div class="gauge-value">
+            <span class="gauge-number" id="accel-value">—</span>
+            <span class="gauge-unit">m/s²</span>
+          </div>
+        </div>
+        <div class="gauge-meta">
+          <span>Baseline: <b>9.81</b></span>
+          <span>Threshold: <b>15.0</b></span>
+        </div>
+      </div>
+
+      <div class="glass-card gauge-card">
+        <h3>Light Level</h3>
+        <div class="gauge-container">
+          <svg class="gauge-svg" viewBox="0 0 200 120">
+            <path d="M20 100 A80 80 0 0 1 180 100" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="12" stroke-linecap="round"/>
+            <path id="light-arc" d="M20 100 A80 80 0 0 1 180 100" fill="none" stroke="url(#lightGrad)" stroke-width="12" stroke-linecap="round" stroke-dasharray="251.2" stroke-dashoffset="251.2"/>
+            <defs>
+              <linearGradient id="lightGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#6366f1"/>
+                <stop offset="100%" stop-color="#f59e0b"/>
+              </linearGradient>
+            </defs>
+          </svg>
+          <div class="gauge-value">
+            <span class="gauge-number" id="light-value">—</span>
+            <span class="gauge-unit">lux</span>
+          </div>
+        </div>
+        <div class="gauge-meta">
+          <span>Sealed: <b>&lt;80</b></span>
+          <span>Threshold: <b>2000</b></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Row 3: GPS + Custody -->
+    <section class="card-row split-row">
+      <div class="glass-card wide-card">
+        <h3>📍 GPS Tracking — Live Location</h3>
+        <div class="gps-display">
+          <div class="gps-coords">
+            <div class="coord-pair">
+              <span class="coord-label">LAT</span>
+              <span class="coord-value mono" id="gps-lat">—</span>
+            </div>
+            <div class="coord-pair">
+              <span class="coord-label">LNG</span>
+              <span class="coord-value mono" id="gps-lng">—</span>
+            </div>
+          </div>
+          <div class="gps-route" id="gps-route">
+            <!-- Route progress bar will be rendered here -->
+          </div>
+        </div>
+      </div>
+
+      <div class="glass-card wide-card">
+        <h3>🔐 Custody Chain</h3>
+        <div id="custody-chain" class="custody-timeline">
+          <p class="muted">No custody transfers yet. Use the handoff panel below.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Row 4: QR Handoff + Event Feed -->
+    <section class="card-row split-row">
+      <div class="glass-card wide-card">
+        <h3>📱 QR Custody Handoff</h3>
+        <div class="handoff-panel">
+          <div class="handoff-form" id="handoff-initiate">
+            <h4>Initiate Transfer (Outgoing)</h4>
+            <input type="text" id="from-custodian" placeholder="Your name / ID" class="input-field">
+            <select id="from-role" class="input-field">
+              <option value="warehouse_manager">Warehouse Manager</option>
+              <option value="driver">Driver</option>
+              <option value="checkpoint_officer">Checkpoint Officer</option>
+              <option value="distribution_manager">Distribution Manager</option>
+              <option value="receiver">Receiver</option>
+            </select>
+            <input type="text" id="handoff-notes" placeholder="Notes (optional)" class="input-field">
+            <button id="btn-initiate" class="btn btn-primary" onclick="initiateHandoff()">Generate QR Code</button>
+          </div>
+          <div class="handoff-qr" id="qr-display" style="display:none;">
+            <div id="qr-canvas"></div>
+            <p class="mono qr-token" id="qr-token-display"></p>
+            <button class="btn btn-secondary" onclick="closeQR()">Close</button>
+          </div>
+          <div class="handoff-accept" id="handoff-accept">
+            <h4>Accept Transfer (Incoming)</h4>
+            <input type="text" id="accept-token" placeholder="Transfer token" class="input-field">
+            <input type="text" id="to-custodian" placeholder="Your name / ID" class="input-field">
+            <select id="to-role" class="input-field">
+              <option value="driver">Driver</option>
+              <option value="warehouse_manager">Warehouse Manager</option>
+              <option value="checkpoint_officer">Checkpoint Officer</option>
+              <option value="distribution_manager">Distribution Manager</option>
+              <option value="receiver">Receiver</option>
+            </select>
+            <button id="btn-accept" class="btn btn-success" onclick="acceptHandoff()">Accept Custody</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="glass-card wide-card">
+        <h3>📋 Live Event Feed</h3>
+        <div id="event-feed" class="event-feed">
+          <p class="muted">Waiting for packets...</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Row 5: Hash Chain Visualizer -->
+    <section class="card-row">
+      <div class="glass-card full-card">
+        <h3>⛓️ Hash Chain — Cryptographic Integrity Proof</h3>
+        <div id="hash-chain-viz" class="hash-chain-container">
+          <p class="muted">Waiting for data...</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Row 6: Tamper Attribution -->
+    <section class="card-row">
+      <div class="glass-card full-card" id="attribution-card" style="display:none;">
+        <h3>🔍 Tamper Attribution — Forensic Analysis</h3>
+        <div id="attribution-content"></div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <p>Illogistician v1.0.0 — Decentralized Cold-Chain Monitoring &amp; Custody Attribution</p>
+    <p class="muted">HMAC-SHA256 · SHA-256 Hash Chain · IPFS/Pinata · Replay Protection · Non-Repudiable Custody</p>
+  </footer>
+
+  <!-- QR Code library (lightweight) -->
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

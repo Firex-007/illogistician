@@ -1,0 +1,23 @@
+{
+  "name": "illogistician",
+  "version": "1.0.0",
+  "description": "Decentralized Cold-Chain Cargo Tamper Monitoring & Custody Attribution System",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node src/server.js",
+    "simulate": "node src/simulator/esp32.simulator.js",
+    "demo": "echo Starting backend... && node src/server.js"
+  },
+  "keywords": ["cold-chain", "iot", "ipfs", "tamper-detection", "supply-chain", "web3"],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.15.2",
+    "better-sqlite3": "^12.9.0",
+    "dotenv": "^17.4.2",
+    "ethers": "^6.16.0",
+    "express": "^5.2.1",
+    "express-rate-limit": "^8.4.1"
+  }
+}

@@ -1,0 +1,13 @@
+node_modules/
+data.db
+.env
+*.log
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Ignore all markdown files
+*.md
+# Except README.md
+!README.md
