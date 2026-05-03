@@ -389,15 +389,14 @@ async function initiateHandoff() {
     // Generate QR code
     const canvas = document.getElementById('qr-canvas');
     canvas.innerHTML = '';
-    if (typeof QRCode !== 'undefined') {
-      QRCode.toCanvas(document.createElement('canvas'), data.data.qrData, {
-        width: 200,
-        margin: 2,
-        color: { dark: '#22d3ee', light: '#0a0e1a' },
-      }, (err, canvasEl) => {
-        if (!err) canvas.appendChild(canvasEl);
-      });
-    }
+    
+    // Foolproof image-based QR using qrserver API
+    const qrImage = document.createElement('img');
+    qrImage.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&color=22d3ee&bgcolor=0a0e1a&data=${encodeURIComponent(data.data.qrData)}`;
+    qrImage.style.borderRadius = '12px';
+    qrImage.style.margin = '10px auto';
+    qrImage.style.display = 'block';
+    canvas.appendChild(qrImage);
 
     addEvent(new Date().toLocaleTimeString(), `🔄 Custody handoff initiated by ${fromCustodian}`, 'custody-event');
     showToast('QR code generated! Share with incoming custodian.', 'success');
