@@ -90,9 +90,13 @@ function updateStatusCards(data) {
   const tamperEl = document.getElementById('tamper-status');
   const tamperGlow = document.getElementById('tamper-glow');
   const isTampered = data.currentState === 'TAMPERED';
-  tamperEl.textContent = data.currentState;
-  tamperEl.className = `card-value ${isTampered ? 'tampered' : 'secure'}`;
-  tamperGlow.className = `status-glow ${isTampered ? 'tampered' : 'secure'}`;
+  if (tamperEl) {
+    tamperEl.textContent = data.currentState;
+    tamperEl.className = `card-value ${isTampered ? 'tampered' : 'secure'}`;
+  }
+  if (tamperGlow) {
+    tamperGlow.className = `status-glow ${isTampered ? 'tampered' : 'secure'}`;
+  }
 
   // Total packets
   document.getElementById('total-packets').textContent = data.totalPackets;
